@@ -28,6 +28,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
+  @@map("typebot-account")
 }
 
 model Session {
@@ -38,6 +39,7 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@map("typebot-session")
 }
 
 model User {
@@ -51,7 +53,6 @@ model User {
   image                       String?                   @db.VarChar(1000)
   company                     String?
   onboardingCategories        Json
-  referral                    String?
   graphNavigation             GraphNavigation?
   preferredAppAppearance      String?
   accounts                    Account[]
@@ -61,6 +62,8 @@ model User {
   sessions                    Session[]
   bannedIps                   BannedIp[]
   displayedInAppNotifications Json?
+
+  @@map("typebot-user")
 }
 
 model ApiToken {
@@ -72,6 +75,7 @@ model ApiToken {
   owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
 
   @@index([ownerId])
+  @@map("typebot-api_token")
 }
 
 model Workspace {
@@ -103,6 +107,8 @@ model Workspace {
   isPastDue                     Boolean               @default(false)
   isVerified                    Boolean?
   themeTemplates                ThemeTemplate[]
+
+  @@map("typebot-workspace")
 }
 
 model MemberInWorkspace {
@@ -116,6 +122,7 @@ model MemberInWorkspace {
 
   @@unique([userId, workspaceId])
   @@index([workspaceId])
+  @@map("typebot-member_in_workspace")
 }
 
 model WorkspaceInvitation {
@@ -128,6 +135,7 @@ model WorkspaceInvitation {
   workspace   Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
+  @@map("typebot-workspace_invitation")
 }
 
 model CustomDomain {
@@ -137,6 +145,7 @@ model CustomDomain {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
+  @@map("typebot-custom_domain")
 }
 
 model Credentials {
@@ -150,6 +159,7 @@ model Credentials {
   workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
   @@index([workspaceId])
+  @@map("typebot-credentials")
 }
 
 model VerificationToken {
@@ -158,6 +168,7 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@map("typebot-verification_token")
 }
 
 model DashboardFolder {
@@ -174,6 +185,7 @@ model DashboardFolder {
 
   @@index([workspaceId])
   @@index([parentFolderId])
+  @@map("typebot-dashboard_folder")
 }
 
 model Typebot {
@@ -211,6 +223,7 @@ model Typebot {
   @@index([workspaceId])
   @@index([folderId])
   @@index([isArchived, createdAt(sort: Desc)])
+  @@map("typebot-typebot")
 }
 
 model Invitation {
@@ -223,6 +236,7 @@ model Invitation {
 
   @@unique([email, typebotId])
   @@index([typebotId])
+  @@map("typebot-invitation")
 }
 
 model CollaboratorsOnTypebots {
@@ -236,6 +250,7 @@ model CollaboratorsOnTypebots {
 
   @@unique([userId, typebotId])
   @@index([typebotId])
+  @@map("typebot-collaborators_on_typebots")
 }
 
 model PublicTypebot {
@@ -251,6 +266,8 @@ model PublicTypebot {
   theme     Json
   settings  Json
   typebot   Typebot  @relation(fields: [typebotId], references: [id], onDelete: Cascade)
+
+  @@map("typebot-public_typebot")
 }
 
 model Result {
@@ -268,6 +285,7 @@ model Result {
 
   @@index([typebotId, isArchived, hasStarted, createdAt(sort: Desc)])
   @@index([typebotId, isArchived, isCompleted])
+  @@map("typebot-result")
 }
 
 model VisitedEdge {
@@ -277,6 +295,7 @@ model VisitedEdge {
   index    Int
 
   @@unique([resultId, index])
+  @@map("typebot-visited_edge")
 }
 
 model Log {
@@ -289,6 +308,7 @@ model Log {
   result      Result   @relation(fields: [resultId], references: [id], onDelete: Cascade)
 
   @@index([resultId])
+  @@map("typebot-log")
 }
 
 model Answer {
@@ -305,12 +325,15 @@ model Answer {
   @@unique([resultId, blockId, groupId])
   @@index([blockId, itemId])
   @@index([storageUsed])
+  @@map("typebot-answer")
 }
 
 model Coupon {
   userPropertiesToUpdate Json
   code                   String    @id @unique
   dateRedeemed           DateTime?
+
+  @@map("typebot-coupon")
 }
 
 model Webhook {
@@ -326,6 +349,7 @@ model Webhook {
   typebot     Typebot  @relation(fields: [typebotId], references: [id], onDelete: Cascade)
 
   @@index([typebotId])
+  @@map("typebot-webhook")
 }
 
 model ClaimableCustomPlan {
@@ -345,6 +369,8 @@ model ClaimableCustomPlan {
   companyName  String?
   vatType      String?
   vatValue     String?
+
+  @@map("typebot-claimable_custom_plan")
 }
 
 model ChatSession {
@@ -352,6 +378,8 @@ model ChatSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
   state     Json
+
+  @@map("typebot-chat_session")
 }
 
 model ThemeTemplate {
@@ -364,6 +392,7 @@ model ThemeTemplate {
   workspaceId String
 
   @@index([workspaceId])
+  @@map("typebot-theme_template")
 }
 
 model BannedIp {
@@ -377,6 +406,7 @@ model BannedIp {
 
   @@index([responsibleTypebotId])
   @@index([userId])
+  @@map("typebot-banned_ip")
 }
 
 enum WorkspaceRole {
